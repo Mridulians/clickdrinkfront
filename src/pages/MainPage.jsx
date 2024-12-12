@@ -10,39 +10,54 @@ const MainPage = () => {
   // Constants
   const CLICKS_PER_DOLLAR = 4800;
 
-  const [count, setCount] = useState(6000);
-  const [dollars, setDollars] = useState(1.25);
+  const [count, setCount] = useState(0);
+  const [dollars, setDollars] = useState(0);
   const [showPlusOne, setShowPlusOne] = useState(false);
 
   const [username, setUsername] = useState("");
-  const [showModal, setShowModal] = useState(true); // Controls the popup visibility
+  const [showModal, setShowModal] = useState(true);
 
   useEffect(() => {
-    // Extract the username from the URL query parameters
     const urlParams = new URLSearchParams(window.location.search);
     const usernameFromUrl = urlParams.get("username");
 
     if (usernameFromUrl) {
-      setUsername(usernameFromUrl);  // If username is in the URL, set it
-      setShowModal(false);  // Hide the popup if username exists in URL
+      setUsername(usernameFromUrl);
+      setShowModal(false);
+      fetchUserData(usernameFromUrl);
     }
   }, []);
 
-  // Update dollars whenever count changes
   useEffect(() => {
     const newDollars = count / CLICKS_PER_DOLLAR;
-    setDollars(newDollars.toFixed(2)); // Keep dollars up to 2 decimal places
+    setDollars(newDollars.toFixed(2));
   }, [count]);
 
-  // Save data to backend: Check if user exists, and then update the data
+  const fetchUserData = async (username) => {
+    try {
+      const response = await axios.get(
+        `https://click-drink-back.onrender.com/api/clicks/getdata/${username}`
+      );
+      if (response.status === 200) {
+        const { clicks, dollars } = response.data;
+        setCount(clicks);
+        setDollars(dollars);
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  };
+
   const saveDataToBackend = async (clicks, dollars) => {
     try {
-      // First, check if the user already exists in the backend
-      const response = await axios.post("https://click-drink-back.onrender.com/api/clicks/save", {
-        username,  // Pass the username with the data
-        clicks,
-        dollars,
-      });
+      const response = await axios.post(
+        "https://click-drink-back.onrender.com/api/clicks/save",
+        {
+          username,
+          clicks,
+          dollars,
+        }
+      );
 
       if (response.status === 200) {
         console.log("User data updated successfully!");
@@ -57,27 +72,20 @@ const MainPage = () => {
   const countIncrement = () => {
     setCount((prevCount) => {
       const newCount = prevCount + 1;
-      const newDollars = (newCount / CLICKS_PER_DOLLAR).toFixed(2); // Calculate updated dollars
-
-      // Send data to backend
+      const newDollars = (newCount / CLICKS_PER_DOLLAR).toFixed(2);
       saveDataToBackend(newCount, newDollars);
-
       return newCount;
     });
 
-    // Show the +1 animation
     setShowPlusOne(true);
-    setTimeout(() => setShowPlusOne(false), 800); // Hide after animation duration
+    setTimeout(() => setShowPlusOne(false), 800);
   };
 
   const updateCountFromTask = (bonus) => {
     setCount((prevCount) => {
       const newCount = prevCount + bonus;
-      const newDollars = (newCount / CLICKS_PER_DOLLAR).toFixed(2); // Calculate updated dollars
-
-      // Send data to backend
+      const newDollars = (newCount / CLICKS_PER_DOLLAR).toFixed(2);
       saveDataToBackend(newCount, newDollars);
-
       return newCount;
     });
   };
@@ -85,14 +93,13 @@ const MainPage = () => {
   const handleUsernameSubmit = (event) => {
     event.preventDefault();
     if (username) {
-      setShowModal(false); // Hide modal after username is entered
-      saveDataToBackend(count, dollars); // Save initial data when user enters username
+      setShowModal(false);
+      saveDataToBackend(count, dollars);
     }
   };
 
   return (
     <div>
-      {/* Modal for Username Input */}
       {showModal && (
         <div className="modal-overlay">
           <div className="modal-content">
@@ -116,7 +123,6 @@ const MainPage = () => {
         </div>
       )}
 
-      {/* Main Content */}
       {!showModal && (
         <div className={`bg-Img w-full h-full py-[4rem]`}>
           <div className="flex flex-row justify-start gap-[10px] items-center bg-gradient-to-r from-customStart to-customEnd w-[90%] md:w-[40%] m-auto rounded-[24px] py-[24px] px-[48px]">
@@ -125,18 +131,14 @@ const MainPage = () => {
             </h2>
             <img src={DollarCoin} alt="" className="w-[40px] h-[40px]" />
           </div>
-
-          {/* Show username if available */}
           {username && (
             <p className="text-white font-sans font-[800] text-[26px] w-fit m-auto mt-[1rem]">
               Hello, {username}!
             </p>
           )}
-
           <div className="text-white text-[32px] leading-[35px] font-bold w-fit mx-auto mt-[4rem]">
             {count}
           </div>
-
           <div className="relative w-fit mx-auto mt-[2rem]">
             {showPlusOne && <div className="plus-one-animation">+1</div>}
             <img
@@ -151,7 +153,6 @@ const MainPage = () => {
               className="w-[200px] h-[57px] absolute top-[150px]"
             />
           </div>
-
           <Task onTaskComplete={updateCountFromTask} />
         </div>
       )}
