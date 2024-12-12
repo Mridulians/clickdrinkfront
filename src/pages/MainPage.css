@@ -1,0 +1,57 @@
+.bg-Img {
+  background-image: url(../assets/BgImg.jpeg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-6px);
+  }
+  50% {
+    transform: translateX(6px);
+  }
+  75% {
+    transform: translateX(-6px);
+  }
+}
+
+.animationEffect:active {
+  animation: shake 0.3s ease-in-out;
+}
+
+
+/* Animation for +1 */
+.plus-one-animation {
+  position: absolute;
+  left: 50%;
+  top: 0%;
+  transform: translate(-50%, -50%);
+  font-size: 24px;
+  font-weight: bold;
+  color: #ffffff;
+  animation: moveUp 0.8s ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes moveUp {
+  0% {
+    transform: translate(-50%, -50%);
+    opacity: 1;
+  }
+  50% {
+    transform: translate(-50%, -150%);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(-50%, -200%);
+    opacity: 0;
+  }
+}
+
+
