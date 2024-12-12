@@ -34,13 +34,21 @@ const MainPage = () => {
     setDollars(newDollars.toFixed(2)); // Keep dollars up to 2 decimal places
   }, [count]);
 
+  // Save data to backend: Check if user exists, and then update the data
   const saveDataToBackend = async (clicks, dollars) => {
     try {
-      await axios.post("http://localhost:4000/api/clicks/save", {
+      // First, check if the user already exists in the backend
+      const response = await axios.post("https://click-drink-back.onrender.com/api/clicks/save", {
+        username,  // Pass the username with the data
         clicks,
         dollars,
       });
-      console.log("Data sent to backend successfully!");
+
+      if (response.status === 200) {
+        console.log("User data updated successfully!");
+      } else if (response.status === 201) {
+        console.log("New user created!");
+      }
     } catch (error) {
       console.error("Error sending data to backend", error);
     }
@@ -78,6 +86,7 @@ const MainPage = () => {
     event.preventDefault();
     if (username) {
       setShowModal(false); // Hide modal after username is entered
+      saveDataToBackend(count, dollars); // Save initial data when user enters username
     }
   };
 
@@ -119,7 +128,7 @@ const MainPage = () => {
 
           {/* Show username if available */}
           {username && (
-            <p className="text-white font-sans font-bold text-[20px]">
+            <p className="text-white font-sans font-[800] text-[26px] w-fit m-auto mt-[1rem]">
               Hello, {username}!
             </p>
           )}
