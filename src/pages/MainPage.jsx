@@ -11,10 +11,22 @@ const MainPage = () => {
   // Constants
   const CLICKS_PER_DOLLAR = 4800;
 
-  const [count, setCount] = useState(0);
+  const [count, setCount] = useState(6000);
   // const [isShaking, setIsShaking] = useState(false);
-  const [dollars, setDollars] = useState(0);
+  const [dollars, setDollars] = useState(1.25);
   const [showPlusOne, setShowPlusOne] = useState(false);
+
+  const [username, setUsername] = useState('');
+
+  useEffect(() => {
+    // Extract the username from the URL query parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const usernameFromUrl = urlParams.get('username');
+    
+    if (usernameFromUrl) {
+      setUsername(usernameFromUrl);
+    }
+  }, []);
 
   // Update dollars whenever count changes
   useEffect(() => {
@@ -81,6 +93,8 @@ const MainPage = () => {
         </h2>
         <img src={DollarCoin} alt="" className="w-[40px] h-[40px]" />
       </div>
+
+      {username && <p>Hello, {username}!</p>}
 
       <div className="text-white text-[32px] leading-[35px] font-bold w-fit mx-auto mt-[4rem]">
         {count}
