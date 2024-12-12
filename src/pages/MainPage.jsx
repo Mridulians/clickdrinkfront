@@ -16,13 +16,13 @@ const MainPage = () => {
   const [dollars, setDollars] = useState(1.25);
   const [showPlusOne, setShowPlusOne] = useState(false);
 
-  const [username, setUsername] = useState('');
+  const [username, setUsername] = useState("");
 
   useEffect(() => {
     // Extract the username from the URL query parameters
     const urlParams = new URLSearchParams(window.location.search);
-    const usernameFromUrl = urlParams.get('username');
-    
+    const usernameFromUrl = urlParams.get("username");
+
     if (usernameFromUrl) {
       setUsername(usernameFromUrl);
     }
@@ -84,9 +84,7 @@ const MainPage = () => {
   };
 
   return (
-    <div
-      className={`bg-Img w-full h-full py-[4rem]`}
-    >
+    <div className={`bg-Img w-full h-full py-[4rem]`}>
       <div className="flex flex-row justify-start gap-[10px] items-center bg-gradient-to-r from-customStart to-customEnd w-[90%] md:w-[40%] m-auto rounded-[24px] py-[24px] px-[48px]">
         <h2 className="text-[#FFFFFF] text-[32px] sm:text-[48px] font-bold leading-[52px]">
           {dollars}$
@@ -94,7 +92,11 @@ const MainPage = () => {
         <img src={DollarCoin} alt="" className="w-[40px] h-[40px]" />
       </div>
 
-      {username && <p>Hello, {username}!</p>}
+      {username && (
+        <p className="text-white font-sans font-bold text-[20px]">
+          Hello, {username}!
+        </p>
+      )}
 
       <div className="text-white text-[32px] leading-[35px] font-bold w-fit mx-auto mt-[4rem]">
         {count}
