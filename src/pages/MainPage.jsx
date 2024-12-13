@@ -7,15 +7,14 @@ import Task from "../components/task/Task";
 import axios from "axios";
 
 const MainPage = () => {
-  // Constants
   const CLICKS_PER_DOLLAR = 4800;
-
   const [count, setCount] = useState(0);
   const [dollars, setDollars] = useState(0);
   const [showPlusOne, setShowPlusOne] = useState(false);
-
   const [username, setUsername] = useState("");
   const [showModal, setShowModal] = useState(true);
+  const [walletConnected, setWalletConnected] = useState(false);
+  const [walletAddress, setWalletAddress] = useState("");
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -32,6 +31,33 @@ const MainPage = () => {
     const newDollars = count / CLICKS_PER_DOLLAR;
     setDollars(newDollars.toFixed(2));
   }, [count]);
+
+  const connectWallet = async () => {
+    if (
+      typeof window !== "undefined" &&
+      window.ton &&
+      typeof window.ton.connect === "function"
+    ) {
+      try {
+        const wallet = await window.ton.connect();
+        setWalletAddress(wallet.address);
+        setWalletConnected(true);
+        console.log("Connected to TON Keeper Wallet:", wallet);
+      } catch (error) {
+        console.error("Error connecting to TON Wallet:", error);
+        alert("Failed to connect to TON Wallet.");
+      }
+    } else {
+      alert(
+        "TON Wallet extension is not installed or not available. Please install it."
+      );
+    }
+  };
+
+  const disconnectWallet = () => {
+    setWalletConnected(false);
+    setWalletAddress("");
+  };
 
   const fetchUserData = async (username) => {
     try {
@@ -131,6 +157,30 @@ const MainPage = () => {
             </h2>
             <img src={DollarCoin} alt="" className="w-[40px] h-[40px]" />
           </div>
+
+
+          
+
+          {/* Show Wallet Information */}
+          {walletConnected ? (
+            <div className="text-white">
+              <p className="font-bold">Connected Wallet: {walletAddress}</p>
+              <button onClick={disconnectWallet} className="text-blue-500">
+                Disconnect Wallet
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={connectWallet}
+              className="bg-blue-500 text-white p-[10px] rounded-lg mt-4"
+            >
+              Connect Wallet
+            </button>
+          )}
+
+
+
+
           {username && (
             <p className="text-white font-sans font-[800] text-[26px] w-fit m-auto mt-[1rem]">
               Hello, {username}!
