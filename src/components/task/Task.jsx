@@ -15,6 +15,7 @@ const Task = ({ onTaskComplete }) => {
     twitter: { isLoading: false, completed: false },
     instagram: { isLoading: false, completed: false },
     linkedin: { isLoading: false, completed: false },
+    telegram: { isLoading: false, completed: false },
     isModalOpen: false, // Added for share popup
   });
 
@@ -23,7 +24,7 @@ const Task = ({ onTaskComplete }) => {
 
     if (taskKey === "friends") {
       // Open share modal for "Share with Friends"
-      setTaskStatus((prev) => ({ ...prev, isModalOpen: true }));
+      setTaskStatus((prev) => ({ ...prev, isModalOpen: true}));
       return;
     }
 
@@ -41,6 +42,16 @@ const Task = ({ onTaskComplete }) => {
       }));
       onTaskComplete(reward); // Update the clicks count in the main page
     }, 4000);
+  };
+
+   // Handle modal close and task completion for 'Share with Friends'
+   const handleModalClose = () => {
+    setTaskStatus((prev) => ({
+      ...prev,
+      isModalOpen: false,
+      friends: { ...prev.friends, completed: true }, // Mark as completed
+    }));
+    onTaskComplete(8000); // Add 8000 points for the 'Share with Friends' task
   };
 
   return (
@@ -132,6 +143,37 @@ const Task = ({ onTaskComplete }) => {
         )}
       </div>
 
+       {/* Telegram Task */}
+       <div className="tasks w-[90%] md:w-[40%] m-auto h-[100px] py-[24px] px-[32px] rounded-[8px] flex flex-row justify-between items-center">
+        <div className="flex flex-row items-center gap-[10px]">
+          <img src={Insta} alt="" className="w-[40px] h-[40px]" />
+          <div>
+            <p className="text-[20px] text-[#FEEFE6] leading-[24px]">
+              Follow ClickDrink on Telegram.
+            </p>
+            <p className="text-[16px] leading-[24px] text-[#FCF0E9] opacity-[0.6]">
+              +4000 CD&apos;s
+            </p>
+          </div>
+        </div>
+        {taskStatus.telegram.completed ? (
+          <FaCheckCircle className="text-green-500 w-[32px] h-[32px]" />
+        ) : (
+          <a
+            href="https://t.me/clickdrink"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-[32px] h-[32px]"
+          >
+            <img
+              src={Plus}
+              alt=""
+              onClick={() => handleAddClick("telegram", 4000)}
+            />
+          </a>
+        )}
+      </div>
+
       {/* LinkedIn Task */}
       <div className="tasks w-[90%] md:w-[40%] m-auto h-[100px] py-[24px] px-[32px] rounded-[8px] flex flex-row justify-between items-center">
         <div className="flex flex-row items-center gap-[10px]">
@@ -167,7 +209,7 @@ const Task = ({ onTaskComplete }) => {
       {taskStatus.isModalOpen && (
         <Share
           isOpen={taskStatus.isModalOpen}
-          onClose={() => setTaskStatus((prev) => ({ ...prev, isModalOpen: false }))}
+          onClose={handleModalClose}
         />
       )}
     </div>

@@ -1,64 +1,26 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import DollarCoin from "../assets/DollorIcon.png";
-import Logo from "../assets/ClickDrinkLogo.png";
+import Logo from "../assets/ClickDrinkLogoNew.png";
 import Ellipse from "../assets/Ellipse.png";
 import "./MainPage.css";
 import Task from "../components/task/Task";
 import axios from "axios";
+import { useTonConnectUI } from "@tonconnect/ui-react";
 
 const MainPage = () => {
   const CLICKS_PER_DOLLAR = 4800;
+
+  // State Variables
   const [count, setCount] = useState(0);
   const [dollars, setDollars] = useState(0);
   const [showPlusOne, setShowPlusOne] = useState(false);
   const [username, setUsername] = useState("");
   const [showModal, setShowModal] = useState(true);
-  const [walletConnected, setWalletConnected] = useState(false);
-  const [walletAddress, setWalletAddress] = useState("");
+  const [tonWalletAddress, setTonWalletAddress] = useState(null);
 
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const usernameFromUrl = urlParams.get("username");
+  const [tonConnectUI] = useTonConnectUI();
 
-    if (usernameFromUrl) {
-      setUsername(usernameFromUrl);
-      setShowModal(false);
-      fetchUserData(usernameFromUrl);
-    }
-  }, []);
-
-  useEffect(() => {
-    const newDollars = count / CLICKS_PER_DOLLAR;
-    setDollars(newDollars.toFixed(2));
-  }, [count]);
-
-  const connectWallet = async () => {
-    if (
-      typeof window !== "undefined" &&
-      window.ton &&
-      typeof window.ton.connect === "function"
-    ) {
-      try {
-        const wallet = await window.ton.connect();
-        setWalletAddress(wallet.address);
-        setWalletConnected(true);
-        console.log("Connected to TON Keeper Wallet:", wallet);
-      } catch (error) {
-        console.error("Error connecting to TON Wallet:", error);
-        alert("Failed to connect to TON Wallet.");
-      }
-    } else {
-      alert(
-        "TON Wallet extension is not installed or not available. Please install it."
-      );
-    }
-  };
-
-  const disconnectWallet = () => {
-    setWalletConnected(false);
-    setWalletAddress("");
-  };
-
+  // Fetch user data based on username
   const fetchUserData = async (username) => {
     try {
       const response = await axios.get(
@@ -74,6 +36,7 @@ const MainPage = () => {
     }
   };
 
+  // Save click data to backend
   const saveDataToBackend = async (clicks, dollars) => {
     try {
       const response = await axios.post(
@@ -95,6 +58,52 @@ const MainPage = () => {
     }
   };
 
+  // Handle wallet connection and disconnection
+  const handleWalletConnection = useCallback((address) => {
+    setTonWalletAddress(address);
+    console.log("Wallet connected successfully");
+  }, []);
+
+  const handleWalletDisconnection = useCallback(() => {
+    setTonWalletAddress(null);
+    console.log("Wallet disconnected successfully");
+  }, []);
+
+  // Check wallet connection and handle status changes
+  useEffect(() => {
+    const checkWalletConnection = async () => {
+      if (tonConnectUI.account?.address) {
+        handleWalletConnection(tonConnectUI.account?.address);
+      } else {
+        handleWalletDisconnection();
+      }
+    };
+
+    checkWalletConnection();
+
+    const unsubscribe = tonConnectUI.onStatusChange((wallet) => {
+      if (wallet) {
+        handleWalletConnection(wallet.account.address);
+      } else {
+        handleWalletDisconnection();
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, [tonConnectUI, handleWalletConnection, handleWalletDisconnection]);
+
+  // Wallet action handler
+  const handleWalletAction = async () => {
+    if (tonConnectUI.connected) {
+      await tonConnectUI.disconnect();
+    } else {
+      await tonConnectUI.openModal();
+    }
+  };
+
+  // Increment click count
   const countIncrement = () => {
     setCount((prevCount) => {
       const newCount = prevCount + 1;
@@ -107,6 +116,7 @@ const MainPage = () => {
     setTimeout(() => setShowPlusOne(false), 800);
   };
 
+  // Update count from task completion
   const updateCountFromTask = (bonus) => {
     setCount((prevCount) => {
       const newCount = prevCount + bonus;
@@ -116,12 +126,48 @@ const MainPage = () => {
     });
   };
 
+  // Handle username submission
   const handleUsernameSubmit = (event) => {
     event.preventDefault();
     if (username) {
       setShowModal(false);
       saveDataToBackend(count, dollars);
     }
+  };
+
+  // Format wallet address
+  const formatAddress = (address) => {
+    return `${address.slice(0, 4)}...${address.slice(-4)}`;
+  };
+
+  // Fetch user data on component mount
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const usernameFromUrl = urlParams.get("username");
+
+    if (usernameFromUrl) {
+      setUsername(usernameFromUrl);
+      setShowModal(false);
+      fetchUserData(usernameFromUrl);
+    }
+  }, []);
+
+  // Update dollars when count changes
+  useEffect(() => {
+    const newDollars = count / CLICKS_PER_DOLLAR;
+    setDollars(newDollars.toFixed(2));
+  }, [count]);
+
+  // Copy wallet address to clipboard
+  const copyToClipboard = (text) => {
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        alert("Wallet address copied to clipboard!");
+      })
+      .catch((error) => {
+        console.error("Failed to copy text: ", error);
+      });
   };
 
   return (
@@ -150,36 +196,37 @@ const MainPage = () => {
       )}
 
       {!showModal && (
-        <div className={`bg-Img w-full h-full py-[4rem]`}>
-          <div className="flex flex-row justify-start gap-[10px] items-center bg-gradient-to-r from-customStart to-customEnd w-[90%] md:w-[40%] m-auto rounded-[24px] py-[24px] px-[48px]">
-            <h2 className="text-[#FFFFFF] text-[32px] sm:text-[48px] font-bold leading-[52px]">
-              {dollars}$
-            </h2>
-            <img src={DollarCoin} alt="" className="w-[40px] h-[40px]" />
-          </div>
+        <div className={`bg-Img w-full h-full py-[2rem]`}>
 
 
-          
 
-          {/* Show Wallet Information */}
-          {walletConnected ? (
-            <div className="text-white">
-              <p className="font-bold">Connected Wallet: {walletAddress}</p>
-              <button onClick={disconnectWallet} className="text-blue-500">
-                Disconnect Wallet
-              </button>
+
+          {tonWalletAddress ? (
+            <div className="flex justify-center items-center gap-[20px] mt-[10px] mb-[20px]">
+              <p
+                onClick={() => copyToClipboard(tonWalletAddress)}
+                className="cursor-pointer text-white"
+              >
+                Connected: {formatAddress(tonWalletAddress)}
+              </p>
+              <button onClick={handleWalletAction}>Disconnect</button>
             </div>
           ) : (
-            <button
-              onClick={connectWallet}
-              className="bg-blue-500 text-white p-[10px] rounded-lg mt-4"
-            >
-              Connect Wallet
-            </button>
+            <button onClick={handleWalletAction} className="flex mx-auto mt-[10px] mb-[20px] rounded-[20px]">Connect wallet</button>
           )}
 
 
 
+          <div className="flex flex-row justify-start gap-[10px] items-center bg-gradient-to-r from-customStart to-customEnd w-[90%] md:w-[40%] m-auto rounded-[24px] py-[24px] px-[48px]">
+            <h2 className="text-[#FFFFFF] text-[32px] sm:text-[48px] font-bold leading-[52px]">
+              {dollars}$
+            </h2>
+            <img
+              src={DollarCoin}
+              alt="Dollar Icon"
+              className="w-[40px] h-[40px]"
+            />
+          </div>
 
           {username && (
             <p className="text-white font-sans font-[800] text-[26px] w-fit m-auto mt-[1rem]">
@@ -193,13 +240,13 @@ const MainPage = () => {
             {showPlusOne && <div className="plus-one-animation">+1</div>}
             <img
               src={Logo}
-              alt=""
+              alt="Logo"
               className="animationEffect w-[184px] h-[184px]"
               onClick={countIncrement}
             />
             <img
               src={Ellipse}
-              alt=""
+              alt="Ellipse"
               className="w-[200px] h-[57px] absolute top-[150px]"
             />
           </div>
