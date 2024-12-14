@@ -6,7 +6,7 @@ import { FaWhatsapp, FaInstagram, FaFacebook, FaRegCopy } from "react-icons/fa";
 
 const Share = ({ isOpen, onClose }) => {
   const [isCopied, setIsCopied] = useState(false);
-  const shareLink = "https://clickdrinkworld.com"; // Replace with your app's actual URL
+  const shareLink = "https://t.me/ClickDrinkBot"; // Replace with your app's actual URL
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(shareLink).then(() => {

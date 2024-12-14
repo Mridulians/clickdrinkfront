@@ -27,9 +27,10 @@ const MainPage = () => {
         `https://click-drink-back.onrender.com/api/clicks/getdata/${username}`
       );
       if (response.status === 200) {
-        const { clicks, dollars } = response.data;
+        const { clicks, dollars , tonWalletAddress } = response.data;
         setCount(clicks);
         setDollars(dollars);
+        setTonWalletAddress(tonWalletAddress)
       }
     } catch (error) {
       console.error("Error fetching user data:", error);
@@ -45,6 +46,7 @@ const MainPage = () => {
           username,
           clicks,
           dollars,
+          tonWalletAddress
         }
       );
 
