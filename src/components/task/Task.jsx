@@ -4,6 +4,7 @@ import Friends from "../../assets/shareWithFriends.png";
 import Twitter from "../../assets/TwitterDrink.png";
 import Insta from "../../assets/InstagramDrink.png";
 import LinkedIn from "../../assets/LinkedinDrink.png";
+import Telegram from '../../assets/TwiiterIcon.png'
 import Plus from "../../assets/PlusDrink.png";
 import { useState } from "react";
 import { FaCheckCircle } from "react-icons/fa";
@@ -146,7 +147,7 @@ const Task = ({ onTaskComplete }) => {
        {/* Telegram Task */}
        <div className="tasks w-[90%] md:w-[40%] m-auto h-[100px] py-[24px] px-[32px] rounded-[8px] flex flex-row justify-between items-center">
         <div className="flex flex-row items-center gap-[10px]">
-          <img src={Insta} alt="" className="w-[40px] h-[40px]" />
+          <img src={Telegram} alt="" className="w-[40px] h-[40px]" />
           <div>
             <p className="text-[20px] text-[#FEEFE6] leading-[24px]">
               Follow ClickDrink on Telegram.

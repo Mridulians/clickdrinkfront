@@ -103,6 +103,31 @@ const MainPage = () => {
     }
   };
 
+  function triggerHapticFeedback() {
+    // Method 1: Telegram WebApp Haptic Feedback
+    // This checks if we're in Telegram's WebApp environment and uses their native haptic feedback
+    if (
+      window.Telegram &&
+      window.Telegram.WebApp &&
+      window.Telegram.WebApp.HapticFeedback
+    ) {
+      window.Telegram.WebApp.HapticFeedback.impactOccurred("light");
+    }
+
+    // Method 2: Web Vibration API
+    // This uses the standard web vibration API supported by most modern mobile browsers
+    if ("vibrate" in navigator) {
+      navigator.vibrate(50); // Vibrate for 50 milliseconds
+    }
+
+    // Method 3: Android Bridge
+    // This checks for a custom Android bridge implementation
+    // Useful when the app is wrapped in a WebView in an Android native app
+    if (window.Android && typeof window.Android.vibrate === "function") {
+      window.Android.vibrate(50);
+    }
+  }
+
   // Increment click count
   const countIncrement = () => {
     setCount((prevCount) => {
@@ -114,6 +139,9 @@ const MainPage = () => {
 
     setShowPlusOne(true);
     setTimeout(() => setShowPlusOne(false), 800);
+
+    triggerHapticFeedback();
+    console.log("Heptic funv runs")
   };
 
   // Update count from task completion
@@ -197,10 +225,6 @@ const MainPage = () => {
 
       {!showModal && (
         <div className={`bg-Img w-full h-full py-[2rem]`}>
-
-
-
-
           {tonWalletAddress ? (
             <div className="flex justify-center items-center gap-[20px] mt-[10px] mb-[20px]">
               <p
@@ -212,10 +236,13 @@ const MainPage = () => {
               <button onClick={handleWalletAction}>Disconnect</button>
             </div>
           ) : (
-            <button onClick={handleWalletAction} className="flex mx-auto mt-[10px] mb-[20px] rounded-[20px]">Connect wallet</button>
+            <button
+              onClick={handleWalletAction}
+              className="flex mx-auto mt-[10px] mb-[20px] rounded-[20px]"
+            >
+              Connect wallet
+            </button>
           )}
-
-
 
           <div className="flex flex-row justify-start gap-[10px] items-center bg-gradient-to-r from-customStart to-customEnd w-[90%] md:w-[40%] m-auto rounded-[24px] py-[24px] px-[48px]">
             <h2 className="text-[#FFFFFF] text-[32px] sm:text-[48px] font-bold leading-[52px]">
