@@ -23,7 +23,7 @@ const Share = ({ isOpen, onClose }) => {
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-3 right-3 text-gray-400 hover:text-white text-2xl font-bold"
+          className="absolute top-3 right-3 text-gray-400 hover:text-white text-2xl font-bold bg-transparent"
         >
           &times;
         </button>
