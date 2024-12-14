@@ -4,9 +4,9 @@ import Friends from "../../assets/shareWithFriends.png";
 import Twitter from "../../assets/TwitterDrink.png";
 import Insta from "../../assets/InstagramDrink.png";
 import LinkedIn from "../../assets/LinkedinDrink.png";
-import Telegram from '../../assets/TwiiterIcon.png'
+import Telegram from "../../assets/TwiiterIcon.png";
 import Plus from "../../assets/PlusDrink.png";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaCheckCircle } from "react-icons/fa";
 import Share from "../Share/Share";
 
@@ -20,12 +20,29 @@ const Task = ({ onTaskComplete }) => {
     isModalOpen: false, // Added for share popup
   });
 
+  // Load saved task state from localStorage
+  useEffect(() => {
+    const savedTaskStatus = JSON.parse(localStorage.getItem("taskStatus"));
+    if (savedTaskStatus) {
+      setTaskStatus((prev) => ({
+        ...prev,
+        ...savedTaskStatus,
+      }));
+    }
+  }, []);
+
+  // Save task state to localStorage whenever it changes
+  useEffect(() => {
+    const { isModalOpen, ...persistentTaskStatus } = taskStatus; // Exclude modal state
+    localStorage.setItem("taskStatus", JSON.stringify(persistentTaskStatus));
+  }, [taskStatus]);
+
   const handleAddClick = (taskKey, reward) => {
     if (taskStatus[taskKey].completed) return; // If task is already completed, do nothing.
 
     if (taskKey === "friends") {
       // Open share modal for "Share with Friends"
-      setTaskStatus((prev) => ({ ...prev, isModalOpen: true}));
+      setTaskStatus((prev) => ({ ...prev, isModalOpen: true }));
       return;
     }
 
@@ -45,8 +62,8 @@ const Task = ({ onTaskComplete }) => {
     }, 4000);
   };
 
-   // Handle modal close and task completion for 'Share with Friends'
-   const handleModalClose = () => {
+  // Handle modal close and task completion for 'Share with Friends'
+  const handleModalClose = () => {
     setTaskStatus((prev) => ({
       ...prev,
       isModalOpen: false,
@@ -144,8 +161,8 @@ const Task = ({ onTaskComplete }) => {
         )}
       </div>
 
-       {/* Telegram Task */}
-       <div className="tasks w-[90%] md:w-[40%] m-auto h-[100px] py-[24px] px-[32px] rounded-[8px] flex flex-row justify-between items-center">
+      {/* Telegram Task */}
+      <div className="tasks w-[90%] md:w-[40%] m-auto h-[100px] py-[24px] px-[32px] rounded-[8px] flex flex-row justify-between items-center">
         <div className="flex flex-row items-center gap-[10px]">
           <img src={Telegram} alt="" className="w-[40px] h-[40px]" />
           <div>
@@ -208,10 +225,7 @@ const Task = ({ onTaskComplete }) => {
 
       {/* Modal for Sharing */}
       {taskStatus.isModalOpen && (
-        <Share
-          isOpen={taskStatus.isModalOpen}
-          onClose={handleModalClose}
-        />
+        <Share isOpen={taskStatus.isModalOpen} onClose={handleModalClose} />
       )}
     </div>
   );
