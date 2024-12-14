@@ -1,24 +1,24 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import DollarCoin from "../assets/DollorIcon.png";
 import Logo from "../assets/ClickDrinkLogoNew.png";
 import Ellipse from "../assets/Ellipse.png";
 import "./MainPage.css";
 import Task from "../components/task/Task";
 import axios from "axios";
-import { useTonConnectUI } from "@tonconnect/ui-react";
+// import { useTonConnectUI } from "@tonconnect/ui-react";
 
 const MainPage = () => {
   const CLICKS_PER_DOLLAR = 4800;
 
   // State Variables
-  const [count, setCount] = useState(0);
-  const [dollars, setDollars] = useState(0);
+  const [count, setCount] = useState(6000);
+  const [dollars, setDollars] = useState(1.25);
   const [showPlusOne, setShowPlusOne] = useState(false);
   const [username, setUsername] = useState("");
   const [showModal, setShowModal] = useState(true);
-  const [tonWalletAddress, setTonWalletAddress] = useState(null);
+  // const [tonWalletAddress, setTonWalletAddress] = useState(null);
 
-  const [tonConnectUI] = useTonConnectUI();
+  // const [tonConnectUI] = useTonConnectUI();
 
   // Fetch user data based on username
   const fetchUserData = async (username) => {
@@ -27,10 +27,10 @@ const MainPage = () => {
         `https://click-drink-back.onrender.com/api/clicks/getdata/${username}`
       );
       if (response.status === 200) {
-        const { clicks, dollars , tonWalletAddress } = response.data;
+        const { clicks, dollars } = response.data;
         setCount(clicks);
         setDollars(dollars);
-        setTonWalletAddress(tonWalletAddress)
+        // setTonWalletAddress(tonWalletAddress)
       }
     } catch (error) {
       console.error("Error fetching user data:", error);
@@ -46,7 +46,7 @@ const MainPage = () => {
           username,
           clicks,
           dollars,
-          tonWalletAddress
+          // tonWalletAddress
         }
       );
 
@@ -61,49 +61,49 @@ const MainPage = () => {
   };
 
   // Handle wallet connection and disconnection
-  const handleWalletConnection = useCallback((address) => {
-    setTonWalletAddress(address);
-    console.log("Wallet connected successfully");
-  }, []);
+  // const handleWalletConnection = useCallback((address) => {
+  //   setTonWalletAddress(address);
+  //   console.log("Wallet connected successfully");
+  // }, []);
 
-  const handleWalletDisconnection = useCallback(() => {
-    setTonWalletAddress(null);
-    console.log("Wallet disconnected successfully");
-  }, []);
+  // const handleWalletDisconnection = useCallback(() => {
+  //   setTonWalletAddress(null);
+  //   console.log("Wallet disconnected successfully");
+  // }, []);
 
-  // Check wallet connection and handle status changes
-  useEffect(() => {
-    const checkWalletConnection = async () => {
-      if (tonConnectUI.account?.address) {
-        handleWalletConnection(tonConnectUI.account?.address);
-      } else {
-        handleWalletDisconnection();
-      }
-    };
+  // // Check wallet connection and handle status changes
+  // useEffect(() => {
+  //   const checkWalletConnection = async () => {
+  //     if (tonConnectUI.account?.address) {
+  //       handleWalletConnection(tonConnectUI.account?.address);
+  //     } else {
+  //       handleWalletDisconnection();
+  //     }
+  //   };
 
-    checkWalletConnection();
+  //   checkWalletConnection();
 
-    const unsubscribe = tonConnectUI.onStatusChange((wallet) => {
-      if (wallet) {
-        handleWalletConnection(wallet.account.address);
-      } else {
-        handleWalletDisconnection();
-      }
-    });
+  //   const unsubscribe = tonConnectUI.onStatusChange((wallet) => {
+  //     if (wallet) {
+  //       handleWalletConnection(wallet.account.address);
+  //     } else {
+  //       handleWalletDisconnection();
+  //     }
+  //   });
 
-    return () => {
-      unsubscribe();
-    };
-  }, [tonConnectUI, handleWalletConnection, handleWalletDisconnection]);
+  //   return () => {
+  //     unsubscribe();
+  //   };
+  // }, [tonConnectUI, handleWalletConnection, handleWalletDisconnection]);
 
-  // Wallet action handler
-  const handleWalletAction = async () => {
-    if (tonConnectUI.connected) {
-      await tonConnectUI.disconnect();
-    } else {
-      await tonConnectUI.openModal();
-    }
-  };
+  // // Wallet action handler
+  // const handleWalletAction = async () => {
+  //   if (tonConnectUI.connected) {
+  //     await tonConnectUI.disconnect();
+  //   } else {
+  //     await tonConnectUI.openModal();
+  //   }
+  // };
 
   function triggerHapticFeedback() {
     // Method 1: Telegram WebApp Haptic Feedback
@@ -166,9 +166,9 @@ const MainPage = () => {
   };
 
   // Format wallet address
-  const formatAddress = (address) => {
-    return `${address.slice(0, 4)}...${address.slice(-4)}`;
-  };
+  // const formatAddress = (address) => {
+  //   return `${address.slice(0, 4)}...${address.slice(-4)}`;
+  // };
 
   // Fetch user data on component mount
   useEffect(() => {
@@ -189,16 +189,16 @@ const MainPage = () => {
   }, [count]);
 
   // Copy wallet address to clipboard
-  const copyToClipboard = (text) => {
-    navigator.clipboard
-      .writeText(text)
-      .then(() => {
-        alert("Wallet address copied to clipboard!");
-      })
-      .catch((error) => {
-        console.error("Failed to copy text: ", error);
-      });
-  };
+  // const copyToClipboard = (text) => {
+  //   navigator.clipboard
+  //     .writeText(text)
+  //     .then(() => {
+  //       alert("Wallet address copied to clipboard!");
+  //     })
+  //     .catch((error) => {
+  //       console.error("Failed to copy text: ", error);
+  //     });
+  // };
 
   return (
     <div>
@@ -227,7 +227,7 @@ const MainPage = () => {
 
       {!showModal && (
         <div className={`bg-Img w-full h-full py-[2rem]`}>
-          {tonWalletAddress ? (
+          {/* {tonWalletAddress ? (
             <div className="flex justify-center items-center gap-[20px] mt-[10px] mb-[20px]">
               <p
                 onClick={() => copyToClipboard(tonWalletAddress)}
@@ -244,7 +244,7 @@ const MainPage = () => {
             >
               Connect wallet
             </button>
-          )}
+          )} */}
 
           <div className="flex flex-row justify-start gap-[10px] items-center bg-gradient-to-r from-customStart to-customEnd w-[90%] md:w-[40%] m-auto rounded-[24px] py-[24px] px-[48px]">
             <h2 className="text-[#FFFFFF] text-[32px] sm:text-[48px] font-bold leading-[52px]">
