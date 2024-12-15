@@ -108,7 +108,7 @@ const Task = ({ onTaskComplete }) => {
               Follow ClickDrink on Twitter.
             </p>
             <p className="text-[16px] leading-[24px] text-[#FCF0E9] opacity-[0.6]">
-              +5000 CD&apos;s
+              +1000 CD&apos;s
             </p>
           </div>
         </div>
@@ -124,7 +124,7 @@ const Task = ({ onTaskComplete }) => {
             <img
               src={Plus}
               alt=""
-              onClick={() => handleAddClick("twitter", 5000)}
+              onClick={() => handleAddClick("twitter", 1000)}
             />
           </a>
         )}
@@ -139,7 +139,7 @@ const Task = ({ onTaskComplete }) => {
               Follow ClickDrink on Instagram.
             </p>
             <p className="text-[16px] leading-[24px] text-[#FCF0E9] opacity-[0.6]">
-              +4000 CD&apos;s
+              +1500 CD&apos;s
             </p>
           </div>
         </div>
@@ -155,7 +155,7 @@ const Task = ({ onTaskComplete }) => {
             <img
               src={Plus}
               alt=""
-              onClick={() => handleAddClick("instagram", 4000)}
+              onClick={() => handleAddClick("instagram", 1500)}
             />
           </a>
         )}
@@ -170,7 +170,7 @@ const Task = ({ onTaskComplete }) => {
               Follow ClickDrink on Telegram.
             </p>
             <p className="text-[16px] leading-[24px] text-[#FCF0E9] opacity-[0.6]">
-              +4000 CD&apos;s
+              +800 CD&apos;s
             </p>
           </div>
         </div>
@@ -186,7 +186,7 @@ const Task = ({ onTaskComplete }) => {
             <img
               src={Plus}
               alt=""
-              onClick={() => handleAddClick("telegram", 4000)}
+              onClick={() => handleAddClick("telegram", 800)}
             />
           </a>
         )}
@@ -201,7 +201,7 @@ const Task = ({ onTaskComplete }) => {
               Follow ClickDrink on LinkedIn.
             </p>
             <p className="text-[16px] leading-[24px] text-[#FCF0E9] opacity-[0.6]">
-              +4000 CD&apos;s
+              +1200 CD&apos;s
             </p>
           </div>
         </div>
@@ -217,7 +217,7 @@ const Task = ({ onTaskComplete }) => {
             <img
               src={Plus}
               alt=""
-              onClick={() => handleAddClick("linkedin", 4000)}
+              onClick={() => handleAddClick("linkedin", 1200)}
             />
           </a>
         )}

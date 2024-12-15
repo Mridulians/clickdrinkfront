@@ -1,8 +1,8 @@
 .bg-Img {
-  background-image: url(../assets/BgImg.jpeg);
+  background-image: url(../assets/BgImgNew.jpg);
   background-repeat: no-repeat;
   background-size: cover;
-  background-position: center;
+  /* background-position: center; */
 }
 
 @keyframes shake {

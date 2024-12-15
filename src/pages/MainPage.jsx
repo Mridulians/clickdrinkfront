@@ -16,6 +16,7 @@ const MainPage = () => {
   const [showPlusOne, setShowPlusOne] = useState(false);
   const [username, setUsername] = useState("");
   const [showModal, setShowModal] = useState(true);
+  const [totalUsers, setTotalUsers] = useState(0); // State to store total users
   // const [tonWalletAddress, setTonWalletAddress] = useState(null);
 
   // const [tonConnectUI] = useTonConnectUI();
@@ -51,7 +52,7 @@ const MainPage = () => {
       );
 
       if (response.status === 200) {
-        console.log("User data updated successfully!");
+        // console.log("User data updated successfully!");
       } else if (response.status === 201) {
         console.log("New user created!");
       }
@@ -59,6 +60,30 @@ const MainPage = () => {
       console.error("Error sending data to backend", error);
     }
   };
+
+  const getTotalNumberOfUsers = async () => {
+    const url = "https://click-drink-back.onrender.com/api/clicks/getdata";
+
+    try {
+      const response = await axios.get(url);
+
+      // Assuming response.data is an array of users
+      if (response.data && Array.isArray(response.data)) {
+        setTotalUsers(response.data.length); // Update state with total users
+      } else {
+        console.log("Unexpected data format:", response.data);
+        setTotalUsers(0); // Reset to 0 if data format is unexpected
+      }
+    } catch (error) {
+      console.error("An error occurred while fetching the user data:", error);
+      setTotalUsers(0); // Reset to 0 in case of an error
+    }
+  };
+
+  // Fetch data when the component mounts
+  useEffect(() => {
+    getTotalNumberOfUsers();
+  }, [count]);
 
   // Handle wallet connection and disconnection
   // const handleWalletConnection = useCallback((address) => {
@@ -143,7 +168,7 @@ const MainPage = () => {
     setTimeout(() => setShowPlusOne(false), 800);
 
     triggerHapticFeedback();
-    console.log("Heptic funv runs")
+    // console.log("Heptic funv runs")
   };
 
   // Update count from task completion
@@ -199,6 +224,9 @@ const MainPage = () => {
   //       console.error("Failed to copy text: ", error);
   //     });
   // };
+    
+  
+  // console.log(totalUsers)
 
   return (
     <div>
@@ -245,6 +273,8 @@ const MainPage = () => {
               Connect wallet
             </button>
           )} */}
+
+          <p className="text-white font-[700] mx-auto mb-[10px] w-fit">Total Active Users : {totalUsers}</p>
 
           <div className="flex flex-row justify-start gap-[10px] items-center bg-gradient-to-r from-customStart to-customEnd w-[90%] md:w-[40%] m-auto rounded-[24px] py-[24px] px-[48px]">
             <h2 className="text-[#FFFFFF] text-[32px] sm:text-[48px] font-bold leading-[52px]">
