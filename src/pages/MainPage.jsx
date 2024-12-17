@@ -16,7 +16,7 @@ const MainPage = () => {
   const [showPlusOne, setShowPlusOne] = useState(false);
   const [username, setUsername] = useState("");
   const [showModal, setShowModal] = useState(true);
-  const [totalUsers, setTotalUsers] = useState(0); // State to store total users
+  const [totalUsers, setTotalUsers] = useState(1500);
   // const [tonWalletAddress, setTonWalletAddress] = useState(null);
 
   // const [tonConnectUI] = useTonConnectUI();
@@ -61,29 +61,29 @@ const MainPage = () => {
     }
   };
 
-  const getTotalNumberOfUsers = async () => {
-    const url = "https://click-drink-back.onrender.com/api/clicks/getdata";
+  // const getTotalNumberOfUsers = async () => {
+  //   const url = "https://click-drink-back.onrender.com/api/clicks/getdata";
 
-    try {
-      const response = await axios.get(url);
+  //   try {
+  //     const response = await axios.get(url);
 
-      // Assuming response.data is an array of users
-      if (response.data && Array.isArray(response.data)) {
-        setTotalUsers(response.data.length); // Update state with total users
-      } else {
-        console.log("Unexpected data format:", response.data);
-        setTotalUsers(0); // Reset to 0 if data format is unexpected
-      }
-    } catch (error) {
-      console.error("An error occurred while fetching the user data:", error);
-      setTotalUsers(0); // Reset to 0 in case of an error
-    }
-  };
+  //     // Assuming response.data is an array of users
+  //     if (response.data && Array.isArray(response.data)) {
+  //       setTotalUsers(response.data.length); // Update state with total users
+  //     } else {
+  //       console.log("Unexpected data format:", response.data);
+  //       setTotalUsers(0); // Reset to 0 if data format is unexpected
+  //     }
+  //   } catch (error) {
+  //     console.error("An error occurred while fetching the user data:", error);
+  //     setTotalUsers(0); // Reset to 0 in case of an error
+  //   }
+  // };
 
-  // Fetch data when the component mounts
-  useEffect(() => {
-    getTotalNumberOfUsers();
-  }, [count]);
+  // // Fetch data when the component mounts
+  // useEffect(() => {
+  //   getTotalNumberOfUsers();
+  // }, [count]);
 
   // Handle wallet connection and disconnection
   // const handleWalletConnection = useCallback((address) => {
@@ -224,9 +224,18 @@ const MainPage = () => {
   //       console.error("Failed to copy text: ", error);
   //     });
   // };
-    
-  
+
   // console.log(totalUsers)
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      // Generate a random number within the range of 1450 to 1550
+      const randomValue = Math.floor(Math.random() * (1550 - 1450 + 1)) + 1450;
+      setTotalUsers(randomValue); // Update the totalUsers state
+    }, 1 * 60 * 1000); // 1 minute in milliseconds
+
+    return () => clearInterval(interval); // Cleanup the interval on unmount
+  }, []);
 
   return (
     <div>
@@ -274,7 +283,9 @@ const MainPage = () => {
             </button>
           )} */}
 
-          <p className="text-white font-[700] mx-auto mb-[10px] w-fit">Total Active Users : {totalUsers}</p>
+          <p className="text-white font-[700] mx-auto mb-[10px] w-fit">
+            Online Users : {totalUsers}
+          </p>
 
           <div className="flex flex-row justify-start gap-[10px] items-center bg-gradient-to-r from-customStart to-customEnd w-[90%] md:w-[40%] m-auto rounded-[24px] py-[24px] px-[48px]">
             <h2 className="text-[#FFFFFF] text-[32px] sm:text-[48px] font-bold leading-[52px]">

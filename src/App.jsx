@@ -2,6 +2,7 @@ import { useState } from "react";
 import SplashScreen from "./components/Splash/SplashScreen";
 import MainPage from "./pages/MainPage";
 import { THEME, TonConnectUIProvider } from "@tonconnect/ui-react";
+// import './App.css'
 
 const App = () => {
   const [showMainPage, setShowMainPage] = useState(false);

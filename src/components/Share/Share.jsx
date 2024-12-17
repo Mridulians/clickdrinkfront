@@ -1,19 +1,35 @@
 /* eslint-disable react/prop-types */
-// import React from 'react'
-
-import { useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { FaWhatsapp, FaInstagram, FaFacebook, FaRegCopy } from "react-icons/fa";
+import { StoreContext } from "../../context/StoreContext";
 
 const Share = ({ isOpen, onClose }) => {
+  const { referralCode, generateReferralCode } = useContext(StoreContext);
+  const [generatedCode, setGeneratedCode] = useState(referralCode || "");
   const [isCopied, setIsCopied] = useState(false);
-  const shareLink = "https://t.me/ClickDrinkBot"; // Replace with your app's actual URL
+
+  // Generate a referral code only when the component mounts or when `isOpen` changes
+  useEffect(() => {
+    if (isOpen) {
+      const code = generateReferralCode();
+      setGeneratedCode(code);
+    }
+  }, [isOpen, generateReferralCode]);
 
   const copyToClipboard = () => {
+    const shareLink = `https://t.me/ClickDrinkBot?referral=${generatedCode}`; // Use the generated code
     navigator.clipboard.writeText(shareLink).then(() => {
       setIsCopied(true);
       setTimeout(() => setIsCopied(false), 2000); // Reset the message after 2 seconds
     });
   };
+
+  // Redirection logic for referral links
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.has("referral")) {
+    // Redirect to the main site without query parameters
+    window.location.href = "https://t.me/ClickDrinkBot";
+  }
 
   if (!isOpen) return null;
 
